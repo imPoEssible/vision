@@ -9,6 +9,15 @@
 
 import cv2
 import numpy as np
+import serial
+import time
+
+class SerialConnection:
+    def __init__(self):
+        self.addr = '/dev/ttyACM0'
+        self.baud = 9600
+        self.port = serial.Serial(self.addr, self.baud, timeout=2)
+
 
 class SmileDetector:
     def __init__(self):
@@ -16,6 +25,10 @@ class SmileDetector:
         self.mouth_cascade = cv2.CascadeClassifier('haarcascade_smile.xml') #smile xml
 
     def run(self):
+        try:
+            ser = SerialConnection()
+        except:
+            raise Exception("Serial port not open, connect Arduino?")
         cap = cv2.VideoCapture(0)
         i = 0
         while True:
@@ -34,6 +47,7 @@ class SmileDetector:
                     for (mp,mq,mr,ms) in mouth:
                         cv2.rectangle(roi_color,(mp,mq),(mp+mr,mq+ms), (255,0,0),1)
                         print "SMILE"
+                        ser.write("1")
                 i = 0
             i += 1
 
