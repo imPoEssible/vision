@@ -27,6 +27,7 @@ class VisualChecker():
 		rospy.Subscriber("/point_location", pointerpos, self.location_callback)
 		rospy.Subscriber("/detected_gestures", gestures, self.gesture_callback)
 		self.mode = 0
+		self.interaction = 0
 
 	def ocr_callback(self, data):
 		pass
@@ -34,6 +35,8 @@ class VisualChecker():
 
 	def smile_callback(self, data):
 		print data.data
+		if data.data:
+			self.interaction = 1
 
 	def location_callback(self, data):
 		xpos = data.positionx
@@ -52,15 +55,22 @@ class VisualChecker():
 
 	def gesture_callback(self, data):
 		if data.wave == True:
+			self.interaction = 1
 			print "hello there!"
 		# print data
 
 	def run(self):
-		ser = SerialConnection()
+		try:
+			ser = SerialConnection()
+		except:
+			raise Exception("Serial port not open, connect Arduino?")
 		r = rospy.Rate(20)
 		self.prev_mode = 0
 		while not rospy.is_shutdown():
-			if self.mode != self.prev_mode:
+			if self.interaction != 0:
+				self.port.write(str(self.interaction))
+				self.interaction = 0
+			elif self.mode != self.prev_mode:
 				ser.port.write(str(self.mode))
 				print "write mode " + str(self.mode)
 				self.prev_mode = self.mode
