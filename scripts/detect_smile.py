@@ -13,6 +13,7 @@ import rospy
 from std_msgs.msg import String, Int16, Bool
 from sensor_msgs.msg import Image
 from cv_bridge import CvBridge, CvBridgeError
+import time
 
 class SmileDetector:
     def __init__(self):
@@ -23,12 +24,12 @@ class SmileDetector:
         self.pub_face = rospy.Publisher("/smile_detected", Bool, queue_size=10) #subscribing to detected gestures from detectfinger
 
     def run(self):
-        r = rospy.Rate(10)
         cap = cv2.VideoCapture(0)
         while not rospy.is_shutdown():
             ret, self.frame = cap.read()
             gray = cv2.cvtColor(self.frame, cv2.COLOR_BGR2GRAY)
             faces = self.face_cascade.detectMultiScale(gray, scaleFactor=1.2, minSize=(20,20))
+            print len(faces)
             for (x,y,w,h) in faces:
                 print "FACE"
                 cv2.rectangle(self.frame,(x,y),(x+w,y+h),(0,0,255),2)
