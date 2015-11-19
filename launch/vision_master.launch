@@ -1,0 +1,13 @@
+<launch>
+
+<arg name="image_view" default="/camera/depth_registered/disparity"/>
+<node name="image_dropper" pkg="topic_tools" type="drop" args="/camera/rgb/image_raw 1 2" />
+
+<node name="vision_master" pkg="poe_vision" type="vision_master.py" />
+<node name="pointcontrol" pkg="poe_kinect" type="detectfinger" />
+
+<node name="vision_detection" pkg="poe_vision" type="detect_feature.py" />
+
+<node name="disparity_visualizer" pkg="image_view" type="disparity_view" args="image:=/camera/depth_registered/disparity"/>
+
+</launch>
