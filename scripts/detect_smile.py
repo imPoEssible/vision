@@ -12,8 +12,6 @@ import numpy as np
 import rospy
 from std_msgs.msg import String, Int16, Bool
 from sensor_msgs.msg import Image
-import pytesseract
-from matplotlib import cm
 from cv_bridge import CvBridge, CvBridgeError
 
 class SmileDetector:
