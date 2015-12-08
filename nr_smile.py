@@ -26,7 +26,7 @@ class SmileDetector:
 
     def run(self):
         try:
-            ser = SerialConnection()
+            ser = serial.Serial('/dev/ttyACM0', 9600, timeout=2)
         except:
             raise Exception("Serial port not open, connect Arduino?")
         cap = cv2.VideoCapture(0)
@@ -37,6 +37,8 @@ class SmileDetector:
                 gray = cv2.cvtColor(self.frame, cv2.COLOR_BGR2GRAY)
                 faces = self.face_cascade.detectMultiScale(gray, scaleFactor=1.2, minSize=(20,20))
                 print len(faces)
+		if len(faces) == 0:
+		    ser.write("2")
                 for (x,y,w,h) in faces:
                     print "FACE"
                     cv2.rectangle(self.frame,(x,y),(x+w,y+h),(0,0,255),2)

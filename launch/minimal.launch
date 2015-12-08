@@ -1,5 +1,0 @@
-<launch>
-
-<node name="smile_detect" pkg="poe_vision" type="detect_smile.py" />
-
-</launch>
