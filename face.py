@@ -9,7 +9,7 @@ from math import pi
 
 class Model:
     def __init__(self):
-        self.face = "=w="
+        self.face = u'(ﾉ´ヮ´)ﾉ*･ﾟ✧'
 
 
     def update(self):
@@ -17,8 +17,7 @@ class Model:
 
 class View:
     """ Draws our game in a Pygame window """
-    def __init__(self,model,screls
-        en):
+    def __init__(self,model,screen):
         self.model = model
         self.screen = screen
         self.define_colors()
@@ -45,7 +44,7 @@ class View:
 
         face_print = self.font.render(self.model.face, 3, self.BLACK)
         face_pos = face_print.get_rect(bottomleft = (20,160))
-        self.screen.blit(print_time,Time_pos)
+        self.screen.blit(face_print, face_pos)
 
         #pygame.draw.circle(self.screen, self.BLACK, [70, 80], 25)
         #pygame.draw.circle(self.screen, self.BLACK, [250, 80], 25)
