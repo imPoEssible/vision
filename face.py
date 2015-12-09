@@ -15,6 +15,17 @@ class Model:
         self.face = self.faces["smile"]
         self.expression = "smile"
 
+        self.define_colors()
+        self.color = self.BLACK
+
+    def define_colors(self):
+        # Define the colors we will use in RGB format
+        self.BLACK = (  0,   0,   0)
+        self.WHITE = (255, 255, 255)
+        self.BLUE =  (  0,   0, 255)
+        self.GREEN = (  0, 255,   0)
+        self.RED =   (255,   0,   0)
+        self.PINK = (240, 128, 128)
     
     def populate_faces(self):
         self.faces["hello"] = u'ヽ(･∀･)ﾉ'
@@ -28,10 +39,7 @@ class Model:
         self.faces["wtf"] = u'щ(ﾟﾛﾟщ)'
 
     def update(self):
-        self.face = self.faces[self.expression]
-
-
-    
+        self.face = self.faces[self.expression]  
 
 class View:
     """ Draws our game in a Pygame window """
@@ -41,19 +49,12 @@ class View:
         self.define_colors()
         self.font = pygame.font.Font("kochi.tff", 50)
 
-    def define_colors(self):
-        # Define the colors we will use in RGB format
-        self.BLACK = (  0,   0,   0)
-        self.WHITE = (255, 255, 255)
-        self.BLUE =  (  0,   0, 255)
-        self.GREEN = (  0, 255,   0)
-        self.RED =   (255,   0,   0)
-        self.PINK = (240, 128, 128)
+
 
     def draw(self):
         self.screen.fill(self.WHITE)
 
-        face_print = self.font.render(self.model.face, 3, self.BLACK)
+        face_print = self.font.render(self.model.face, 3, self.model.color)
         face_pos = face_print.get_rect(bottomleft = (20,160))
         self.screen.blit(face_print, face_pos)
 
@@ -74,6 +75,7 @@ class Controller:
     def handle_pygame_mouse(self, event):
         x, y = event.pos
         self.model.expression = "blush"
+        self.model.color = self.model.PINK
 
 if __name__ == '__main__':
     pygame.init()
@@ -94,6 +96,7 @@ if __name__ == '__main__':
                 controller.handle_pygame_mouse(event)
             elif event.type == MOUSEBUTTONUP:
                 model.expression = "smile"
+                self.model.color = self.model.BLACK
         controller.handle_pygame_key()
         model.update()
         view.draw()
