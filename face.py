@@ -9,11 +9,29 @@ from math import pi
 
 class Model:
     def __init__(self):
-        self.face = u'(ﾉ´ヮ´)ﾉ*･ﾟ✧'
+        self.faces = {}
+        self.populate_faces()
 
+        self.face = self.faces["smile"]
+        self.expression = "smile"
+
+    
+    def populate_faces(self):
+        self.faces["hello"] = u'ヽ(･∀･)ﾉ'
+        self.faces["glitter"] = u'(ﾉ´ヮ´)ﾉ*･ﾟ✧'
+        self.faces["excite"] = u'(o((*ﾟ▽ﾟ*))o)'
+        self.faces["d_left"] = u'〜(￣▽￣〜)'
+        self.faces["d_right"] = u'(〜￣▽￣)〜'
+        self.faces["blush"] = u'(〃・ω・〃)'
+        self.faces["smile"] = u'( ・ω・ )'
+        self.faces["question"] = u'( ・◇・)？'
+        self.faces["wtf"] = u'щ(ﾟﾛﾟщ)'
 
     def update(self):
-        pass
+        self.face = self.faces[self.expression]
+
+
+    
 
 class View:
     """ Draws our game in a Pygame window """
@@ -34,20 +52,10 @@ class View:
 
     def draw(self):
         self.screen.fill(self.WHITE)
-        # This draws a triangle using the polygon command
-        up_tri = [[160, 140], [120, 190], [200, 190]]
-        down_tri = [[160, 190], [120, 140], [200, 140]]
-
-        #pygame.draw.arc(screen, self.BLACK, [120, 140, 100, 80], pi, 2*pi, 4)
-        #pygame.draw.polygon(self.screen, self.PINK, down_tri)
-        # Draw a circle
 
         face_print = self.font.render(self.model.face, 3, self.BLACK)
         face_pos = face_print.get_rect(bottomleft = (20,160))
         self.screen.blit(face_print, face_pos)
-
-        #pygame.draw.circle(self.screen, self.BLACK, [70, 80], 25)
-        #pygame.draw.circle(self.screen, self.BLACK, [250, 80], 25)
 
         pygame.display.update()
 
@@ -60,12 +68,12 @@ class Controller:
     def handle_pygame_key(self):
         keypressed = pygame.key.get_pressed()
         if keypressed[pygame.K_LEFT]:
-            pass
-        if keypressed[pygame.K_RIGHT]:
-            pass
+            print "key!"
+            self.model.expression = "blush"
 
     def handle_pygame_mouse(self, event):
         x, y = event.pos
+        self.model.expression = "blush"
 
 if __name__ == '__main__':
     pygame.init()
@@ -84,6 +92,8 @@ if __name__ == '__main__':
                 running = False
             if event.type == MOUSEBUTTONDOWN:
                 controller.handle_pygame_mouse(event)
+            elif event.type == MOUSEBUTTONUP:
+                model.expression = "smile"
         controller.handle_pygame_key()
         model.update()
         view.draw()
