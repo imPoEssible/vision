@@ -46,13 +46,10 @@ class View:
     def __init__(self,model,screen):
         self.model = model
         self.screen = screen
-        self.define_colors()
         self.font = pygame.font.Font("kochi.tff", 50)
 
-
-
     def draw(self):
-        self.screen.fill(self.WHITE)
+        self.screen.fill(self.model.WHITE)
 
         face_print = self.font.render(self.model.face, 3, self.model.color)
         face_pos = face_print.get_rect(bottomleft = (20,160))
@@ -96,7 +93,7 @@ if __name__ == '__main__':
                 controller.handle_pygame_mouse(event)
             elif event.type == MOUSEBUTTONUP:
                 model.expression = "smile"
-                self.model.color = self.model.BLACK
+                model.color = model.BLACK
         controller.handle_pygame_key()
         model.update()
         view.draw()
