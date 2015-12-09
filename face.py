@@ -9,21 +9,20 @@ from math import pi
 
 class Model:
     def __init__(self):
-        self.l_eye = 0
-        self.r_eye = 0
-        self.mouth = 0
-        self.blush = 0
+        self.face = "=w="
 
 
     def update(self):
-    	pass
+        pass
 
 class View:
     """ Draws our game in a Pygame window """
-    def __init__(self,model,screen):
+    def __init__(self,model,screls
+        en):
         self.model = model
         self.screen = screen
         self.define_colors()
+        self.font = pygame.font.Font("kochi.tff", 50)
 
     def define_colors(self):
         # Define the colors we will use in RGB format
@@ -43,19 +42,15 @@ class View:
         #pygame.draw.arc(screen, self.BLACK, [120, 140, 100, 80], pi, 2*pi, 4)
         #pygame.draw.polygon(self.screen, self.PINK, down_tri)
         # Draw a circle
-        font = pygame.font.Font("kochi.tff", 50)
 
-        Time_text = "(^o^)/"
-        print_time = font.render(Time_text, 3, self.BLACK)
-        Time_pos = print_time.get_rect(bottomleft = (20,160))
+        face_print = self.font.render(self.model.face, 3, self.BLACK)
+        face_pos = face_print.get_rect(bottomleft = (20,160))
         self.screen.blit(print_time,Time_pos)
 
         #pygame.draw.circle(self.screen, self.BLACK, [70, 80], 25)
         #pygame.draw.circle(self.screen, self.BLACK, [250, 80], 25)
 
         pygame.display.update()
-
-
 
 
 class Controller:
@@ -66,9 +61,9 @@ class Controller:
     def handle_pygame_key(self):
         keypressed = pygame.key.get_pressed()
         if keypressed[pygame.K_LEFT]:
-        	pass
+            pass
         if keypressed[pygame.K_RIGHT]:
-        	pass
+            pass
 
     def handle_pygame_mouse(self, event):
         x, y = event.pos
