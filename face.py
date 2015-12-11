@@ -29,6 +29,7 @@ class Model:
 
         self.define_colors()
         self.color = self.BLACK
+        self.click = False
 
         self.ser = serial.Serial('/dev/ttyACM0', 9600, timeout=2)
         self.cap = cv2.VideoCapture(0)
@@ -61,21 +62,29 @@ class Model:
             real_faces = self.face_cascade.detectMultiScale(gray, scaleFactor=1.2, minSize=(20,20))
             print len(real_faces)
             if len(real_faces) == 0:
+                t_exp = "excite"
                 self.ser.write("2")
-                return
-            for (x,y,w,h) in real_faces:
-                print "FACE"
-                cv2.rectangle(self.frame,(x,y),(x+w,y+h),(0,0,255),2)
-                roi_gray = gray[y:y+h, x:x+w]
-                roi_color = self.frame[y:y+h, x:x+w]
+                self.ser.flush()
+            else:
+                for (x,y,w,h) in real_faces:
+                    print "FACE"
+                    cv2.rectangle(self.frame,(x,y),(x+w,y+h),(0,0,255),2)
+                    roi_gray = gray[y:y+h, x:x+w]
+                    roi_color = self.frame[y:y+h, x:x+w]
+                    t_exp = "wtf"
 
-                mouth = self.mouth_cascade.detectMultiScale(roi_gray, scaleFactor=1.7, minNeighbors=20, minSize=(10,10), flags=cv2.cv.CV_HAAR_SCALE_IMAGE)
-                for (mp,mq,mr,ms) in mouth:
-                    cv2.rectangle(roi_color,(mp,mq),(mp+mr,mq+ms), (255,0,0),1)
-                    print "SMILE"
-                    self.ser.write("1")
-                self.frame_count = 0
+                    mouth = self.mouth_cascade.detectMultiScale(roi_gray, scaleFactor=1.7, minNeighbors=20, minSize=(10,10), flags=cv2.cv.CV_HAAR_SCALE_IMAGE)
+                    for (mp,mq,mr,ms) in mouth:
+                        cv2.rectangle(roi_color,(mp,mq),(mp+mr,mq+ms), (255,0,0),1)
+                        print "SMILE"
+                        t_exp = "glitter"
+                        self.ser.write("1")
+                        self.ser.flush()
+            if self.click != True:
+                self.expression = t_exp
+            self.frame_count = 0
         self.frame_count += 1
+
         # cv2.imshow("output", self.frame)
         # c = cv2.waitKey(1)
 
@@ -133,9 +142,12 @@ if __name__ == '__main__':
         for event in pygame.event.get():
             if event.type == QUIT:
                 running = False
-            if event.type == MOUSEBUTTONDOWN:
-                controller.handle_pygame_mouse(event)
+            elif event.type == MOUSEBUTTONDOWN:
+                model.click = True
+                model.expression = "blush"
+                model.color = model.PINK
             elif event.type == MOUSEBUTTONUP:
+                model.click = False
                 model.expression = "smile"
                 model.color = model.BLACK
         controller.handle_pygame_key()
