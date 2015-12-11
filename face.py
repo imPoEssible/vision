@@ -97,6 +97,7 @@ class View:
     def __init__(self,model,screen):
         self.model = model
         self.screen = screen
+        tvar = "~"
         self.font = pygame.font.Font("kochi.tff", 50)
 
     def draw(self):
