@@ -62,7 +62,7 @@ class Model:
             real_faces = self.face_cascade.detectMultiScale(gray, scaleFactor=1.2, minSize=(20,20))
             print len(real_faces)
             if len(real_faces) == 0:
-                t_exp = "excite"
+                t_exp = "smile"
                 self.ser.write("2")
                 self.ser.flush()
             else:
@@ -71,8 +71,7 @@ class Model:
                     cv2.rectangle(self.frame,(x,y),(x+w,y+h),(0,0,255),2)
                     roi_gray = gray[y:y+h, x:x+w]
                     roi_color = self.frame[y:y+h, x:x+w]
-                    t_exp = "wtf"
-
+                    t_exp = "question"
                     mouth = self.mouth_cascade.detectMultiScale(roi_gray, scaleFactor=1.7, minNeighbors=20, minSize=(10,10), flags=cv2.cv.CV_HAAR_SCALE_IMAGE)
                     for (mp,mq,mr,ms) in mouth:
                         cv2.rectangle(roi_color,(mp,mq),(mp+mr,mq+ms), (255,0,0),1)
@@ -89,6 +88,10 @@ class Model:
         # c = cv2.waitKey(1)
 
     def update(self):
+        bytesToRead = self.ser.inWaiting()
+        ser_input = self.ser.read(bytesToRead)
+        if "KNOCK" in ser_input:
+            print "GOT KNOCK"
         self.face = self.faces[self.expression]
         self.find_smile()
 
@@ -97,7 +100,6 @@ class View:
     def __init__(self,model,screen):
         self.model = model
         self.screen = screen
-        tvar = "~"
         self.font = pygame.font.Font("kochi.tff", 50)
 
     def draw(self):
@@ -145,6 +147,7 @@ if __name__ == '__main__':
                 running = False
             elif event.type == MOUSEBUTTONDOWN:
                 model.click = True
+                controller.handle_pygame_mouse(event)
                 model.expression = "blush"
                 model.color = model.PINK
             elif event.type == MOUSEBUTTONUP:
