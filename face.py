@@ -17,49 +17,10 @@ class SerialConnection:
         self.baud = 9600
         self.port = serial.Serial(self.addr, self.baud, timeout=2)
 
-class SmileDetector:
+class Model:
     def __init__(self):
         self.face_cascade = cv2.CascadeClassifier('haarcascade_frontalface_alt.xml') #face xml
         self.mouth_cascade = cv2.CascadeClassifier('haarcascade_smile.xml') #smile xml
-
-    def run(self):
-        try:
-            ser = serial.Serial('/dev/ttyACM0', 9600, timeout=2)
-        except:
-            raise Exception("Serial port not open, connect Arduino?")
-        cap = cv2.VideoCapture(0)
-        i = 0
-        while True:
-            ret, self.frame = cap.read()
-            if i == 15:
-                gray = cv2.cvtColor(self.frame, cv2.COLOR_BGR2GRAY)
-                faces = self.face_cascade.detectMultiScale(gray, scaleFactor=1.2, minSize=(20,20))
-                print len(faces)
-            if len(faces) == 0:
-                ser.write("2")
-                continue
-            for (x,y,w,h) in faces:
-                print "FACE"
-                cv2.rectangle(self.frame,(x,y),(x+w,y+h),(0,0,255),2)
-                roi_gray = gray[y:y+h, x:x+w]
-                roi_color = self.frame[y:y+h, x:x+w]
-
-                mouth = self.mouth_cascade.detectMultiScale(roi_gray, scaleFactor=1.7, minNeighbors=20, minSize=(10,10), flags=cv2.cv.CV_HAAR_SCALE_IMAGE)
-                for (mp,mq,mr,ms) in mouth:
-                    cv2.rectangle(roi_color,(mp,mq),(mp+mr,mq+ms), (255,0,0),1)
-                    print "SMILE"
-                    ser.write("1")
-                i = 0
-            i += 1
-
-            cv2.imshow("output", self.frame)
-            c = cv2.waitKey(1)
-
-        cap.release()
-        cv2.destroyAllWindows()
-
-class Model:
-    def __init__(self):
         self.faces = {}
         self.populate_faces()
 
@@ -69,6 +30,10 @@ class Model:
         self.define_colors()
         self.color = self.BLACK
 
+        self.ser = serial.Serial('/dev/ttyACM0', 9600, timeout=2)
+        self.cap = cv2.VideoCapture(0)
+        self.frame_count = 0
+
     def define_colors(self):
         # Define the colors we will use in RGB format
         self.BLACK = (  0,   0,   0)
@@ -77,7 +42,7 @@ class Model:
         self.GREEN = (  0, 255,   0)
         self.RED =   (255,   0,   0)
         self.PINK = (240, 128, 128)
-    
+
     def populate_faces(self):
         self.faces["hello"] = u'ヽ(･∀･)ﾉ'
         self.faces["glitter"] = u'(ﾉ´ヮ´)ﾉ*･ﾟ✧'
@@ -89,8 +54,34 @@ class Model:
         self.faces["question"] = u'( ・◇・)？'
         self.faces["wtf"] = u'щ(ﾟﾛﾟщ)'
 
+    def find_smile(self):
+        ret, self.frame = self.cap.read()
+        if self.frame_count == 15:
+            gray = cv2.cvtColor(self.frame, cv2.COLOR_BGR2GRAY)
+            real_faces = self.face_cascade.detectMultiScale(gray, scaleFactor=1.2, minSize=(20,20))
+            print len(real_faces)
+            if len(real_faces) == 0:
+                self.ser.write("2")
+                return
+            for (x,y,w,h) in real_faces:
+                print "FACE"
+                cv2.rectangle(self.frame,(x,y),(x+w,y+h),(0,0,255),2)
+                roi_gray = gray[y:y+h, x:x+w]
+                roi_color = self.frame[y:y+h, x:x+w]
+
+                mouth = self.mouth_cascade.detectMultiScale(roi_gray, scaleFactor=1.7, minNeighbors=20, minSize=(10,10), flags=cv2.cv.CV_HAAR_SCALE_IMAGE)
+                for (mp,mq,mr,ms) in mouth:
+                    cv2.rectangle(roi_color,(mp,mq),(mp+mr,mq+ms), (255,0,0),1)
+                    print "SMILE"
+                    self.ser.write("1")
+                self.frame_count = 0
+        self.frame_count += 1
+        # cv2.imshow("output", self.frame)
+        # c = cv2.waitKey(1)
+
     def update(self):
-        self.face = self.faces[self.expression]  
+        self.face = self.faces[self.expression]
+        self.find_smile()
 
 class View:
     """ Draws our game in a Pygame window """
