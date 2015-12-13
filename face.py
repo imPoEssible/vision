@@ -48,18 +48,21 @@ class Model:
     def populate_faces(self):
         self.faces["hello"] = u'ヽ(･∀･)ﾉ'
         self.faces["glitter"] = u'(ﾉ´ヮ´)ﾉ*･ﾟ✧'
-        self.faces["excite"] = u'(o((*ﾟ▽ﾟ*))o)'
+        self.faces["excite"] = u'（-＾〇＾-）'
         self.faces["d_left"] = u'〜(￣▽￣〜)'
         self.faces["d_right"] = u'(〜￣▽￣)〜'
         self.faces["blush"] = u'(〃・ω・〃)'
         self.faces["smile"] = u'( ・ω・ )'
         self.faces["blink"] = u'( -ω- )'
         self.faces["question"] = u'( ・◇・)？'
-        self.faces["wtf"] = u'щ(ﾟﾛﾟщ)'
+
+        #self.faces["wtf"] = u'щ(ﾟﾛﾟщ)'
+        self.faces["wtf"] = u'Σ(￣。￣)'
+        self.faces["sleep"] = u'(-w-) zzz'
 
     def find_smile(self):
         ret, self.frame = self.cap.read()
-        if self.frame_count == 15:
+        if self.frame_count == 35:
             gray = cv2.cvtColor(self.frame, cv2.COLOR_BGR2GRAY)
             real_faces = self.face_cascade.detectMultiScale(gray, scaleFactor=1.2, minSize=(20,20))
             print len(real_faces)
@@ -92,8 +95,10 @@ class Model:
     def update(self):
         bytesToRead = self.ser.inWaiting()
         ser_input = self.ser.read(bytesToRead)
-        if "KNOCK" in ser_input:
-            print "GOT KNOCK"
+        if "SLEEP" in ser_input:
+            self.expression = "sleep"
+        elif "KNOCK" in ser_input:
+            self.expression = "wtf"
         self.face = self.faces[self.expression]
         self.find_smile()
 
