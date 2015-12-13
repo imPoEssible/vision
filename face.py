@@ -34,6 +34,7 @@ class Model:
         self.ser = serial.Serial('/dev/ttyACM0', 9600, timeout=2)
         self.cap = cv2.VideoCapture(0)
         self.frame_count = 0
+        self.mode = "idle"
 
     def define_colors(self):
         # Define the colors we will use in RGB format
@@ -52,6 +53,7 @@ class Model:
         self.faces["d_right"] = u'(〜￣▽￣)〜'
         self.faces["blush"] = u'(〃・ω・〃)'
         self.faces["smile"] = u'( ・ω・ )'
+        self.faces["blink"] = u'( -ω- )'
         self.faces["question"] = u'( ・◇・)？'
         self.faces["wtf"] = u'щ(ﾟﾛﾟщ)'
 
@@ -100,7 +102,7 @@ class View:
     def __init__(self,model,screen):
         self.model = model
         self.screen = screen
-        self.font = pygame.font.Font("kochi.tff", 50)
+        self.font = pygame.font.Font("./kochi.tff", 50)
 
     def draw(self):
         self.screen.fill(self.model.WHITE)
