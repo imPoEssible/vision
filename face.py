@@ -53,13 +53,13 @@ class Model:
         self.faces["d_left"] = u'〜(￣▽￣〜)'
         self.faces["d_right"] = u'(〜￣▽￣)〜'
         self.faces["blush"] = u'(〃・ω・〃)'
-        self.faces["sleep"] = u'( ・ω・ )'
+        self.faces["smile"] = u'( ・ω・ )'
         self.faces["blink"] = u'( -ω- )'
         self.faces["question"] = u'( ・◇・)？'
 
         #self.faces["wtf"] = u'щ(ﾟﾛﾟщ)'
         self.faces["wtf"] = u'Σ(￣。￣)'
-        self.faces["smile"] = u'(-w-) zzz'
+        self.faces["sleep"] = u'(-w-) zzz'
 
     def find_smile(self):
         ret, self.frame = self.cap.read()
