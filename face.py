@@ -79,6 +79,8 @@ class Model:
                     roi_color = self.frame[y:y+h, x:x+w]
                     t_exp = "question"
                     mouth = self.mouth_cascade.detectMultiScale(roi_gray, scaleFactor=1.7, minNeighbors=20, minSize=(10,10), flags=cv2.cv.CV_HAAR_SCALE_IMAGE)
+                    if len(mouth) == 0:
+                        self.ser.write("2")
                     for (mp,mq,mr,ms) in mouth:
                         cv2.rectangle(roi_color,(mp,mq),(mp+mr,mq+ms), (255,0,0),1)
                         print "SMILE"
