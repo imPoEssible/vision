@@ -69,7 +69,7 @@ class Model:
             print len(real_faces)
             if len(real_faces) == 0:
                 t_exp = "smile"
-                self.ser.write("2")
+                self.ser.write("9")
                 self.ser.flush()
             else:
                 for (x,y,w,h) in real_faces:
