@@ -10,6 +10,7 @@ import cv2
 import numpy as np
 import serial
 import time
+import os
 
 class SerialConnection:
     def __init__(self):
@@ -52,13 +53,13 @@ class Model:
         self.faces["d_left"] = u'〜(￣▽￣〜)'
         self.faces["d_right"] = u'(〜￣▽￣)〜'
         self.faces["blush"] = u'(〃・ω・〃)'
-        self.faces["smile"] = u'( ・ω・ )'
+        self.faces["sleep"] = u'( ・ω・ )'
         self.faces["blink"] = u'( -ω- )'
         self.faces["question"] = u'( ・◇・)？'
 
         #self.faces["wtf"] = u'щ(ﾟﾛﾟщ)'
         self.faces["wtf"] = u'Σ(￣。￣)'
-        self.faces["sleep"] = u'(-w-) zzz'
+        self.faces["smile"] = u'(-w-) zzz'
 
     def find_smile(self):
         ret, self.frame = self.cap.read()
@@ -138,6 +139,7 @@ def run_screen():
     pass
 
 if __name__ == '__main__':
+    os.environ["SDL_FBDEV"] = "/dev/fb1"
     pygame.init()
     walls = []
     size = (320, 240)
